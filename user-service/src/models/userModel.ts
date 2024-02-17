@@ -6,6 +6,7 @@ export interface IUser {
   birthday: Date;
   timezone: string;
   localBirthday: Date;
+  lastBirthdayMessageSent?: Date;
 }
 
 export interface IUserDocument extends IUser, Document {
@@ -17,6 +18,7 @@ const userSchema = new Schema<IUserDocument>({
   birthday: { type: Date, required: true },
   timezone: { type: String, required: true },
   localBirthday: { type: Date, required: true },
+  lastBirthdayMessageSent: { type: Date },
 });
 
 userSchema.index({ localBirthday: 1 });

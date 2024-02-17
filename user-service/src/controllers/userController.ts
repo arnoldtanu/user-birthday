@@ -3,6 +3,7 @@ import { IUser } from '../models/userModel';
 import { UserVisibleError } from '../models/ErrorModel';
 import moment from 'moment-timezone';
 import { deleteUser, findUserById, registerNewUser, updateUserData } from '../repositories/userRepositories';
+import { addYearToLocalBirthday, createSuccessResponseObject, handleError } from '../helper/helper';
 
 export const getUsersController = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -58,7 +59,7 @@ function createUserDataObject(req:Request) {
 
   const isBirthdayPassedThisYear = Boolean(reqData.localBirthday.getTime() <= rightNow.getTime());
   if (isBirthdayPassedThisYear) {
-    reqData.localBirthday = new Date(reqData.localBirthday.setFullYear(rightNow.getFullYear() + 1));
+    reqData.localBirthday = addYearToLocalBirthday(reqData.localBirthday);
   }
   if (!moment.tz.zone(reqData.timezone)) throw new UserVisibleError('Timezone not valid', 400);
   if (!moment(req.body.birthday, 'YYY-MM-DD', true).isValid()) throw new UserVisibleError('Birthday Date format not valid, must be in YYYY-MM-DD');
@@ -69,50 +70,4 @@ function getUserIdFromRequest(req:Request) {
   const userId = req.body.userId;
   if (typeof userId === 'undefined') throw new UserVisibleError('user id is required', 400);
   return userId;
-}
-
-/**
- * function that will handle if there are some errors that occur
- * @param error error object when there is a problem
- * @param res response object
- */
-function handleError(error: any, res:Response) : void {
-  console.error(error);
-  let errorCode = 500;
-  if (error instanceof UserVisibleError) {
-    if (error.errorCode !== null) errorCode = error.errorCode;
-    else errorCode = 400;
-  } else if (error.name === 'MongoServerError' && error.code === 11000) {
-    errorCode = 400;
-    error.message = "user's email already registered.";
-  }
-  res.status(errorCode).json(createErrorResponseObject(error, errorCode));
-}
-
-/**
- * create an object structure that will be passed as response data
- * @param data data to return as response
- * @returns response data
- */
-function createSuccessResponseObject(data:any) {
-  return {
-    success: true,
-    data: data,
-  };
-}
-
-/**
- * create an object structure that will be passed as response data when an error occurs
- * @param error error object when there is a problem
- * @param errorCode http error code that will be returned as response
- * @returns response data
- */
-function createErrorResponseObject(error: Error, errorCode: number) {
-  return {
-    success: false,
-    error: {
-      code: errorCode,
-      message: error.message,
-    },
-  };
 }

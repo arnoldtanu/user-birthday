@@ -15,6 +15,7 @@ services:
       COLLECTION_NAME: user
       API_KEY: 80MnVkyQRPXGMkpZUhEp2p3JShR9XhVJ
       AMQP_URL: amqp://rabbitmq
+      QUEUE_NAME: user_bday
     ports:
       - 3000:3000
     volumes:
