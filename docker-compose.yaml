@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+
+  user-service:
+    container_name: user-service
+    build:
+      context: "./user-service"
+      dockerfile: Dockerfile
+    image: "arnoldtanu-user-service:1.0.0"
+    environment:
+      PORT: 3000
+      TZ: UTC
+      MONGODB_URL: mongodb://root:example@mongo:27017/
+      COLLECTION_NAME: user
+    ports:
+      - 3000:3000
+    volumes:
+      - type: bind
+        source: ./user-service/src
+        target: /app/src
+    restart: on-failure
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:7.0.5
+    restart: on-failure
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - 27017:27017
