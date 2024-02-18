@@ -1,6 +1,12 @@
 import { Response } from 'express';
 import { UserVisibleError } from '../models/ErrorModel';
 
+/**
+ * add year to localBirthday date and return the value
+ * @param localBirthday date
+ * @param numberOfYear number
+ * @returns new localBirthday date after adding years
+ */
 export function addYearToLocalBirthday(localBirthday:Date, numberOfYear = 1) {
   const rightNow = new Date();
   return localBirthday = new Date(localBirthday.setFullYear(rightNow.getFullYear() + numberOfYear));

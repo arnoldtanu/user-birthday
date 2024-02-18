@@ -49,6 +49,8 @@ export const deleteUserController = async (req: Request, res: Response): Promise
 
 function createUserDataObject(req:Request) {
   const rightNow = new Date();
+  if (!moment.tz.zone(req.body.timezone)) throw new UserVisibleError('Timezone not valid', 400);
+  if (!moment(req.body.birthday, 'YYY-MM-DD', true).isValid()) throw new UserVisibleError('Birthday Date format not valid, must be in YYYY-MM-DD');
   const reqData : IUser = {
     fullname: req.body.fullname,
     email: req.body.email,
@@ -61,8 +63,6 @@ function createUserDataObject(req:Request) {
   if (isBirthdayPassedThisYear) {
     reqData.localBirthday = addYearToLocalBirthday(reqData.localBirthday);
   }
-  if (!moment.tz.zone(reqData.timezone)) throw new UserVisibleError('Timezone not valid', 400);
-  if (!moment(req.body.birthday, 'YYY-MM-DD', true).isValid()) throw new UserVisibleError('Birthday Date format not valid, must be in YYYY-MM-DD');
   return reqData;
 }
 
