@@ -54,7 +54,7 @@ function createUserDataObject(req:Request) {
     email: req.body.email,
     birthday: new Date(req.body.birthday),
     timezone: req.body.timezone,
-    localBirthday: new Date(moment.tz(req.body.birthday, req.body.timezone).tz('UTC').toDate().setFullYear(rightNow.getFullYear())),
+    localBirthday: new Date(moment.tz(req.body.birthday + " 09:00:00", req.body.timezone).tz('UTC').toDate().setFullYear(rightNow.getFullYear())),
   };
 
   const isBirthdayPassedThisYear = Boolean(reqData.localBirthday.getTime() <= rightNow.getTime());
