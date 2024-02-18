@@ -1,5 +1,4 @@
 # user-birthday
-# orgchart
 An simple API to register user's name and birthday, and the sistem will send happy birthday message to their email at 9 am on their local time.
 
 ### Getting Started
