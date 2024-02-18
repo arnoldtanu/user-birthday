@@ -30,7 +30,7 @@ export const updateUserController = async (req: Request, res: Response): Promise
     const userId = getUserIdFromRequest(req);
     const userData = createUserDataObject(req);
     const users = await updateUserData(userId, userData);
-    res.status(201).json(createSuccessResponseObject(users));
+    res.status(200).json(createSuccessResponseObject(users));
   } catch (error) {
     handleError(error, res);
   }
@@ -41,7 +41,7 @@ export const deleteUserController = async (req: Request, res: Response): Promise
     const userId = getUserIdFromRequest(req);
     const users = await deleteUser(userId);
     if (users === null) throw new UserVisibleError('userId not found');
-    res.status(201).json(createSuccessResponseObject({ message: 'User has been deleted', data: users }));
+    res.status(200).json(createSuccessResponseObject({ message: 'User has been deleted', data: users }));
   } catch (error) {
     handleError(error, res);
   }
