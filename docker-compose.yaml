@@ -42,3 +42,47 @@ services:
       - 5672:5672
       - 15672:15672
     restart: on-failure
+
+  notification-service:
+    container_name: notification-service
+    build:
+      context: "./notification-service"
+      dockerfile: Dockerfile
+    image: "arnoldtanu-notification-service:1.0.0"
+    environment:
+      PORT: 3000
+      TZ: UTC
+      COLLECTION_NAME: user
+      AMQP_URL: amqp://rabbitmq
+      QUEUE_NAME: user_bday
+      USER_URL: user-service:3000
+    ports:
+      - 3001:3000
+    volumes:
+      - type: bind
+        source: ./notification-service/src
+        target: /app/src
+    restart: on-failure
+    depends_on:
+      - rabbitmq
+
+  cron-service:
+    container_name: cron-service
+    build:
+      context: "./cron-service"
+      dockerfile: Dockerfile
+    image: "arnoldtanu-cron-service:1.0.0"
+    environment:
+      PORT: 3000
+      TZ: UTC
+      USER_SERVICE_URL: http://user-service:3000/v1/cron
+      API_KEY: 80MnVkyQRPXGMkpZUhEp2p3JShR9XhVJ
+    ports:
+      - 3002:3000
+    volumes:
+      - type: bind
+        source: ./cron-service/src
+        target: /app/src
+    restart: on-failure
+    depends_on:
+      - user-service

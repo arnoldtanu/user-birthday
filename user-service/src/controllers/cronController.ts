@@ -7,11 +7,13 @@ import { IUserDocument } from '../models/userModel';
 
 const AMQP_URL = process.env.AMQP_URL || '';
 const QUEUE_NAME = process.env.QUEUE_NAME || 'users';
+const API_KEY = process.env.API_KEY || '';
 
 export const queueBirthdayUsersController = async (req: Request, res: Response): Promise<void> => {
   try {
+    console.log("cron user API called");
     const reqAPIKey = req.body.APIKey;
-    if (reqAPIKey !== process.env.API_KEY) throw new UserVisibleError('Invalid API Key');
+    if (reqAPIKey !== API_KEY) throw new UserVisibleError('Invalid API Key');
     const users = await findBirthdayUserThisHour();
     console.log(users);
     if (users.length > 0) sendToMessageBroker(users);
